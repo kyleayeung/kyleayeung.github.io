@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kyle Yeung</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="description" content="Kyle Yeung — Stanford student in computer science, economics, and music. Pianist, violinist, composer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an engraved score. Five staff lines run behind the name; sections read like movements,
+   with a narrow left margin for labels (like a part's instrument name) and a wide right column for content. */
+:root {
+  --paper: #F4F6FA;
+  --surface: #FFFFFF;
+  --ink: #16203A;
+  --muted: #586179;
+  --rule: #D3D8E4;
+  --brass: #8C5E12;
+  --brass-soft: rgba(140, 94, 18, 0.10);
+
+  --display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.75rem;
+  --step-3: 2.5rem;
+  --step-4: clamp(3.25rem, 9vw, 6.5rem);
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #0E1423;
+    --surface: #151D30;
+    --ink: #E7EAF2;
+    --muted: #9AA3B9;
+    --rule: #28324A;
+    --brass: #DDA94E;
+    --brass-soft: rgba(221, 169, 78, 0.12);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #0E1423;
+  --surface: #151D30;
+  --ink: #E7EAF2;
+  --muted: #9AA3B9;
+  --rule: #28324A;
+  --brass: #DDA94E;
+  --brass-soft: rgba(221, 169, 78, 0.12);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration-color: var(--brass); text-underline-offset: 3px; }
+a:hover { color: var(--brass); }
+:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- Nav ---------- */
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--paper);
+}
+.nav {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+.nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.nav .mark { font-family: var(--display); font-size: var(--step-1); text-decoration: none; letter-spacing: 0.01em; }
+.nav ul { display: flex; flex-wrap: wrap; gap: 4px 20px; list-style: none; margin: 0; padding: 0; }
+.nav ul a { font-size: 0.875rem; color: var(--muted); text-decoration: none; }
+.nav ul a:hover { color: var(--ink); }
+
+/* ---------- Hero: name on a staff ---------- */
+.hero { padding-block: 72px 56px; }
+.staff {
+  position: relative;
+  padding-block: 18px;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--gap) - 1px), var(--rule) calc(var(--gap) - 1px), var(--rule) var(--gap));
+  background-size: 100% calc(var(--gap) * 5);
+  background-repeat: no-repeat;
+  background-position: 0 calc(18px + 0.08em);
+  --gap: clamp(0.65rem, 1.8vw, 1.3rem);
+}
+.staff::before {
+  /* the clef-side barline that opens a system */
+  content: ""; position: absolute; left: 0; top: calc(18px + 0.08em + var(--gap) - 1px);
+  height: calc(var(--gap) * 4 + 1px); width: 3px; background: var(--ink);
+}
+.hero h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: var(--step-4);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  padding-left: clamp(18px, 3vw, 36px);
+}
+.hero h1 em { font-style: italic; color: var(--brass); }
+.hero .tempo {
+  font-family: var(--display); font-style: italic; font-size: var(--step-1);
+  color: var(--muted); margin-top: 28px;
+}
+.hero .lede { max-width: 60ch; margin-top: 12px; font-size: 1.125rem; }
+.hero .facts {
+  display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 28px; padding: 0; list-style: none;
+  font-family: var(--mono); font-size: 0.8125rem; color: var(--muted);
+}
+.hero .facts b { color: var(--ink); font-weight: 500; }
+
+/* ---------- Section frame: margin label + content ---------- */
+section.mvt { border-top: 1px solid var(--rule); padding-block: 64px; }
+.mvt .wrap { display: grid; grid-template-columns: 180px 1fr; gap: 24px 48px; }
+.mvt-label { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 72px); align-self: start; }
+.mvt-label .no { font-family: var(--display); font-style: italic; color: var(--brass); font-size: var(--step-1); }
+.mvt-label h2 { font-family: var(--body); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.14em; font-weight: 600; margin-top: 4px; }
+.mvt-body { min-width: 0; display: grid; gap: 32px; }
+.mvt-body > h3 { font-family: var(--display); font-weight: 400; font-size: var(--step-3); line-height: 1.1; max-width: 22ch; }
+@media (max-width: 760px) {
+  .mvt .wrap { grid-template-columns: 1fr; }
+  .mvt-label { position: static; }
+  section.mvt { padding-block: 48px; }
+  .hero { padding-block: 48px 40px; }
+}
+
+/* ---------- About: three voices ---------- */
+.voices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border-top: 2px solid var(--ink); }
+.voice { padding: 20px 20px 4px 0; display: grid; gap: 8px; align-content: start; }
+.voice + .voice { padding-left: 20px; border-left: 1px solid var(--rule); }
+.voice .k { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); }
+.voice h4 { margin: 0; font-family: var(--display); font-weight: 600; font-size: var(--step-1); }
+.voice p { color: var(--muted); font-size: 0.9375rem; }
+@media (max-width: 760px) {
+  .voices { grid-template-columns: 1fr; }
+  .voice + .voice { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+}
+.prose { max-width: 64ch; display: grid; gap: 14px; }
+
+/* ---------- Projects ---------- */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filters button {
+  font: 500 0.8125rem var(--body); color: var(--muted); background: transparent;
+  border: 1px solid var(--rule); border-radius: 999px; padding: 6px 14px; cursor: pointer;
+}
+.filters button:hover { color: var(--ink); border-color: var(--muted); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.projects { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+.project {
+  display: grid; grid-template-columns: 7.5rem 1fr; gap: 6px 28px;
+  padding-block: 22px; border-bottom: 1px solid var(--rule);
+}
+.project .cat { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); padding-top: 6px; display: grid; gap: 2px; align-content: start; }
+.project .cat b { color: var(--brass); font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; }
+.project h4 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 1.375rem; line-height: 1.25; }
+.project p { color: var(--muted); margin-top: 6px; max-width: 64ch; }
+.project .stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; padding: 0; list-style: none; }
+.project .stack li { font-family: var(--mono); font-size: 0.75rem; padding: 2px 8px; background: var(--brass-soft); border-radius: 3px; }
+@media (max-width: 560px) { .project { grid-template-columns: 1fr; } .project .cat { display: flex; gap: 10px; padding-top: 0; } }
+
+/* ---------- Music ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 2px solid var(--ink); }
+.stat { padding: 18px 16px 0 0; display: grid; gap: 2px; align-content: start; }
+.stat + .stat { padding-left: 16px; border-left: 1px solid var(--rule); }
+.stat .n { font-family: var(--display); font-size: var(--step-3); line-height: 1; font-variant-numeric: lining-nums tabular-nums; }
+.stat .l { font-size: 0.875rem; color: var(--muted); }
+@media (max-width: 760px) {
+  .stats { grid-template-columns: repeat(2, 1fr); row-gap: 20px; }
+  .stat:nth-child(3) { padding-left: 0; border-left: 0; }
+}
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 48px; }
+@media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+.list-block h5 {
+  margin: 0 0 10px; font: 600 0.75rem var(--body); text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+}
+.dl { list-style: none; margin: 0; padding: 0; display: grid; }
+.dl li { display: grid; grid-template-columns: 1fr auto; gap: 12px; padding-block: 9px; border-bottom: 1px solid var(--rule); font-size: 0.9375rem; }
+.dl li span:last-child { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dl li small { display: block; color: var(--muted); font-size: 0.8125rem; }
+
+details.rep { border-top: 2px solid var(--ink); }
+details.rep summary {
+  cursor: pointer; list-style: none; padding-block: 16px; display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  font-family: var(--display); font-size: var(--step-2);
+}
+details.rep summary::-webkit-details-marker { display: none; }
+details.rep summary .hint { font: 400 0.8125rem var(--mono); color: var(--muted); }
+details.rep summary .hint::after { content: " +"; color: var(--brass); }
+details.rep[open] summary .hint::after { content: " –"; }
+.rep-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 48px; padding-bottom: 12px; }
+@media (max-width: 760px) { .rep-grid { grid-template-columns: 1fr; } }
+.era h6 { margin: 0 0 8px; font: italic 400 1.125rem var(--display); color: var(--brass); }
+.era p { font-size: 0.875rem; color: var(--muted); margin-bottom: 6px; }
+.era p b { color: var(--ink); font-weight: 600; }
+
+/* ---------- Timeline (experience) ---------- */
+.timeline { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--ink); }
+.timeline li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 4px 28px; padding-block: 20px; border-bottom: 1px solid var(--rule); }
+.timeline .when { font-family: var(--mono); font-size: 0.8125rem; color: var(--muted); padding-top: 3px; font-variant-numeric: tabular-nums; }
+.timeline h4 { margin: 0; font-size: 1.0625rem; font-weight: 600; }
+.timeline .role { color: var(--brass); font-size: 0.9375rem; }
+.timeline ul { margin: 8px 0 0; padding-left: 1.1em; color: var(--muted); font-size: 0.9375rem; display: grid; gap: 4px; max-width: 66ch; }
+@media (max-width: 560px) { .timeline li { grid-template-columns: 1fr; } }
+
+/* ---------- Contact / footer ---------- */
+.contact-line { font-family: var(--display); font-size: var(--step-3); line-height: 1.15; }
+.contact-line a { text-decoration-thickness: 1px; }
+.links { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 0.9375rem; }
+footer { border-top: 1px solid var(--rule); padding-block: 28px 40px; color: var(--muted); font-size: 0.8125rem; }
+footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.fine { font-family: var(--display); font-style: italic; }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Sections">
+  <div class="wrap">
+    <a class="mark" href="#top">Kyle Yeung</a>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#music">Music</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="staff">
+      <h1>Kyle <em>Yeung</em></h1>
+    </div>
+    <p class="tempo">Pianist, violinist, composer, and programmer.</p>
+    <p class="lede">I study computer science, economics, and music at Stanford. I build software, research how money moves through the arts, and perform and write music. Lately I've been working on tools that sit where those meet, like an app that listens to a practice session and tells you what to fix.</p>
+    <ul class="facts">
+      <li><b>Stanford University</b> · Class of 2030</li>
+      <li><b>LA Phil</b> Composer Fellow</li>
+      <li><b>YoungArts</b> Winner with Distinction</li>
+    </ul>
+  </div>
+</header>
+
+<section class="mvt" id="about">
+  <div class="wrap">
+    <div class="mvt-label"><div class="no">I.</div><h2>About</h2></div>
+    <div class="mvt-body">
+      <h3>Three disciplines, one way of working.</h3>
+      <div class="voices">
+        <div class="voice">
+          <span class="k">Code</span>
+          <h4>Computer Science</h4>
+          <p>Python, Java, C++, and R. Coursework in Stanford's CS106B; projects in audio analysis, games, and recommender logic.</p>
+        </div>
+        <div class="voice">
+          <span class="k">Markets</span>
+          <h4>Economics</h4>
+          <p>Research on the National Endowment for the Arts with Columbia Business School, and survey-data analysis at UC Irvine.</p>
+        </div>
+        <div class="voice">
+          <span class="k">Score</span>
+          <h4>Music</h4>
+          <p>Ten-plus years as a pianist and violinist. Principal pianist and later principal violinist of the Pacific Symphony Youth Orchestra.</p>
+        </div>
+      </div>
+      <div class="prose">
+        <p>I grew up in Irvine, California, practicing piano before school and writing code after it. Both reward the same habits: slow, deliberate repetition, listening closely for what's wrong, and fixing one small thing at a time.</p>
+        <p>Outside of my own work, I care about access. I co-founded Practice Makes Perfect, a student-run nonprofit that teaches music and coding for free, including to kids living in a family shelter.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mvt" id="projects">
+  <div class="wrap">
+    <div class="mvt-label"><div class="no">II.</div><h2>Projects</h2></div>
+    <div class="mvt-body">
+      <h3>Things I've built and studied.</h3>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
+        <button type="button" id="f-code" data-f="code" aria-pressed="false">Software</button>
+        <button type="button" id="f-econ" data-f="econ" aria-pressed="false">Economics &amp; research</button>
+        <button type="button" id="f-impact" data-f="impact" aria-pressed="false">Impact</button>
+      </div>
+      <ul class="projects" id="project-list">
+        <li class="project" data-t="code">
+          <div class="cat"><b>Software</b><span>Web app</span></div>
+          <div>
+            <h4>AI-Assisted Piano Practice Coach</h4>
+            <p>Upload a recording of a practice session and get feedback on timing and note accuracy. The app analyzes the audio, writes feedback in plain language, and tracks progress across sessions so you can see what's improving.</p>
+            <ul class="stack"><li>Python</li><li>Audio analysis</li><li>LLM feedback</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="code">
+          <div class="cat"><b>Software</b><span>Game · Java</span></div>
+          <div>
+            <h4>Pac-Man</h4>
+            <p>A full Pac-Man clone with a grid-based board and all four ghosts. Each ghost (Blinky, Pinky, Inky, Clyde) has its own chase behavior, built on a shared entity interface.</p>
+            <ul class="stack"><li>Java</li><li>OOP</li><li>Game AI</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="code">
+          <div class="cat"><b>Software</b><span>CLI · Python</span></div>
+          <div>
+            <h4>K-pop Song Recommender &amp; Trivia</h4>
+            <p>An interactive program that recommends a random song from the artist you pick, then quizzes you on each group's discography. Built with dictionaries, input-validation loops, and the <code>random</code> module.</p>
+            <ul class="stack"><li>Python</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="code">
+          <div class="cat"><b>Coursework</b><span>Stanford</span></div>
+          <div>
+            <h4>CS106B: Programming Abstractions</h4>
+            <p>Recursion, backtracking, hashing, linked structures, and algorithm analysis in C++, across seven assignments.</p>
+            <ul class="stack"><li>C++</li><li>Data structures</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="econ">
+          <div class="cat"><b>Research</b><span>2025</span></div>
+          <div>
+            <h4>The Economics of the National Endowment for the Arts</h4>
+            <p>Economics research on the NEA, mentored by a professor at Columbia Business School.</p>
+            <ul class="stack"><li>Public economics</li><li>Arts policy</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="econ">
+          <div class="cat"><b>Research</b><span>Summer 2024</span></div>
+          <div>
+            <h4>Media, Community, and Democratic Norms</h4>
+            <p>At UC Irvine's Center for the Scientific Study of Ethics and Morality, I used R and regression analysis on survey data to study how media consumption and community engagement relate to support for democratic norms.</p>
+            <ul class="stack"><li>R</li><li>Regression</li><li>Survey data</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="econ impact">
+          <div class="cat"><b>Systems</b><span>2022–2026</span></div>
+          <div>
+            <h4>Bookkeeping for a Store in Bauchi, Nigeria</h4>
+            <p>Led a five-person team over seven months to design a financial tracking system for a shop that kept no written records: a daily logbook, dual-copy receipts, and a monthly profit summary.</p>
+            <ul class="stack"><li>Financial systems</li><li>Team lead</li></ul>
+          </div>
+        </li>
+        <li class="project" data-t="impact">
+          <div class="cat"><b>Policy</b><span>2025</span></div>
+          <div>
+            <h4>AI for Special-Education IEPs</h4>
+            <p>Wrote and presented a state bill, as Lead Speaker for the California Association of Student Councils, on using AI in Individualized Education Programs to help identify learning disabilities such as dyslexia.</p>
+            <ul class="stack"><li>Education policy</li><li>AI</li></ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="mvt" id="music">
+  <div class="wrap">
+    <div class="mvt-label"><div class="no">III.</div><h2>Music</h2></div>
+    <div class="mvt-body">
+      <h3>Pianist, violinist, composer.</h3>
+      <div class="stats">
+        <div class="stat"><span class="n">10+</span><span class="l">years performing</span></div>
+        <div class="stat"><span class="n">171</span><span class="l">of 13,000 named YoungArts winners</span></div>
+        <div class="stat"><span class="n">$50k+</span><span class="l">raised through chamber concerts</span></div>
+        <div class="stat"><span class="n">2</span><span class="l">principal chairs, piano &amp; violin</span></div>
+      </div>
+
+      <div class="two-col">
+        <div class="list-block">
+          <h5>Selected honors</h5>
+          <ul class="dl">
+            <li><span>LA Phil Composer Fellowship</span><span>2025–26</span></li>
+            <li><span>National YoungArts Winner <small>Composition; Piano</small></span><span>2024, 2025</span></li>
+            <li><span>Osaka International Music Competition <small>First Prize, piano</small></span><span>2025</span></li>
+            <li><span>Franz Liszt Center International Piano Competition <small>First Prize</small></span><span>2025</span></li>
+            <li><span>Palm Springs International Piano Competition <small>Silver Medal</small></span><span>2025</span></li>
+            <li><span>Rising Stars Grand Prix, Berlin <small>First Prize, Grand Cash Prize</small></span><span>2024</span></li>
+            <li><span>MTNA Composition <small>National First Place</small></span><span>2019, 2023</span></li>
+            <li><span>NPR's <i>From the Top</i> <small>Finalist</small></span><span></span></li>
+            <li><span>U.S. Chopin Foundation Scholarship</span><span>2023–25</span></li>
+          </ul>
+        </div>
+        <div class="list-block">
+          <h5>Ensembles</h5>
+          <ul class="dl">
+            <li><span>Pacific Symphony Youth Orchestra <small>Principal Violin</small></span><span>2025–26</span></li>
+            <li><span>Pacific Symphony Youth Orchestra <small>Principal Piano</small></span><span>2022–25</span></li>
+            <li><span>Pacific Symphony Santiago Strings <small>Principal Piano</small></span><span>2019–22</span></li>
+            <li><span>Fischoff National Chamber Music Competition <small>Quarterfinalist</small></span><span>2024</span></li>
+          </ul>
+          <h5 style="margin-top:28px">Training</h5>
+          <ul class="dl">
+            <li><span>LA Phil <small>Composer Fellowship Program</small></span><span>2025–26</span></li>
+            <li><span>Sasha Starcevich <small>Private piano studio</small></span><span>2021–</span></li>
+            <li><span>The Juilliard School <small>Pre-College, piano</small></span><span>2019–21</span></li>
+            <li><span>Colburn School <small>Community School, violin</small></span><span>2019–23</span></li>
+            <li><span>Chamber Music OC <small>Pre-College Program</small></span><span>2018–24</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <details class="rep">
+        <summary>Repertoire <span class="hint">Piano · 7 periods</span></summary>
+        <div class="rep-grid">
+          <div class="era"><h6>Baroque</h6>
+            <p><b>Bach</b> French Suites III (complete) and V; Preludes &amp; Fugues BWV 846–852, 861, 865, 878, 886; Invention No. 13</p>
+            <p><b>Scarlatti</b> Sonata K. 492</p></div>
+          <div class="era"><h6>Classical</h6>
+            <p><b>Mozart</b> Sonatas K. 280, 284, 333, 545</p>
+            <p><b>Haydn</b> Sonatas Hob. XVI:34, 48, 50</p>
+            <p><b>Beethoven</b> Sonatas Op. 2 Nos. 1–3, Op. 10 No. 3, Op. 53 “Waldstein”; Violin Sonatas Nos. 5 &amp; 8</p></div>
+          <div class="era"><h6>Romantic</h6>
+            <p><b>Chopin</b> Sonata No. 3; Ballade No. 4; Scherzo No. 4; Fantaisie-Impromptu; Polonaise Op. 53; Études from Op. 10 &amp; Op. 25</p>
+            <p><b>Liszt</b> Trois études de concert (“Un sospiro”); La Campanella; Hungarian Rhapsody No. 2</p>
+            <p><b>Schumann</b> Abegg Variations · <b>Rachmaninoff</b> Études-Tableaux Op. 39 No. 1 · <b>Scriabin</b> Sonata No. 2</p></div>
+          <div class="era"><h6>Impressionist</h6>
+            <p><b>Ravel</b> Alborada del gracioso; Le Tombeau de Couperin</p>
+            <p><b>Debussy</b> Estampes: La soirée dans Grenade · <b>Fauré</b> Romance sans paroles Op. 17 No. 3</p></div>
+          <div class="era"><h6>Contemporary</h6>
+            <p><b>Tan Dun</b> Rush Hour in Hong Kong · <b>Stephen Hough</b> Fanfare Toccata · <b>Babajanian</b> Poème · <b>Carl Vine</b> Anne Landa Preludes 3–7</p></div>
+          <div class="era"><h6>Concerto</h6>
+            <p><b>Rachmaninoff</b> No. 2 · <b>Chopin</b> Nos. 1 &amp; 2 · <b>Liszt</b> No. 2 · <b>Beethoven</b> No. 1 · <b>Mozart</b> No. 18, K. 456 · <b>Haydn</b> F major</p></div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="mvt" id="experience">
+  <div class="wrap">
+    <div class="mvt-label"><div class="no">IV.</div><h2>Experience</h2></div>
+    <div class="mvt-body">
+      <h3>Research, leadership, and service.</h3>
+      <ul class="timeline">
+        <li>
+          <span class="when">2025</span>
+          <div><h4>Columbia Business School</h4><div class="role">Economics Researcher</div>
+            <ul><li>Researched the economics of the National Endowment for the Arts under a Columbia professor.</li></ul></div>
+        </li>
+        <li>
+          <span class="when">Summer 2024</span>
+          <div><h4>UC Irvine, Center for the Scientific Study of Ethics and Morality</h4><div class="role">Summer Research Mentee</div>
+            <ul><li>Analyzed survey data in R on media consumption, community engagement, and democratic norms.</li>
+                <li>Applied regression and data visualization to interpret patterns in public attitudes.</li></ul></div>
+        </li>
+        <li>
+          <span class="when">2022–2026</span>
+          <div><h4>Leadership Initiatives, International Business Internship</h4><div class="role">Team Lead · Team Facilitator · Fundraising Chair</div>
+            <ul><li>Led a 5-person team designing bookkeeping for a store in Bauchi, Nigeria.</li>
+                <li>Facilitated 7 intern teams as liaison to program leadership.</li>
+                <li>Raised $7,000 across seven businesses; won the 2024 Global Fundraising Award.</li></ul></div>
+        </li>
+        <li>
+          <span class="when">2020–now</span>
+          <div><h4>Practice Makes Perfect</h4><div class="role">Co-Founder &amp; Program Director</div>
+            <ul><li>Co-founded a student-run nonprofit offering free tutoring to underserved students nationwide.</li>
+                <li>Partnered with Illumination Foundation to teach coding and piano to children at a family shelter.</li></ul></div>
+        </li>
+        <li>
+          <span class="when">2023–2025</span>
+          <div><h4>California Association of Student Councils</h4><div class="role">Delegate; Lead Speaker</div>
+            <ul><li>Wrote and presented a 2025 state bill on AI in special-education IEPs.</li></ul></div>
+        </li>
+        <li>
+          <span class="when">2022–2026</span>
+          <div><h4>Clubs founded</h4><div class="role">Chamber Music · Investment · American Red Cross</div>
+            <ul><li>Chamber Music Club: concerts with two partner clubs raised over $50,000.</li>
+                <li>Investment Club: founder, president, and curriculum designer.</li>
+                <li>American Red Cross Club: ran a blood drive and Palisades wildfire fundraising.</li></ul></div>
+        </li>
+      </ul>
+      <div class="list-block">
+        <h5>Other honors</h5>
+        <ul class="dl">
+          <li><span>Taco Bell Live Más Scholarship <small>$10,000</small></span><span>2025</span></li>
+          <li><span>National High School Model UN <small>2nd Place</small></span><span>2025</span></li>
+          <li><span>UCLA Model UN <small>Best Delegation</small></span><span>2025</span></li>
+          <li><span>Presidential Volunteer Service Award <small>Gold</small></span><span>2022–25</span></li>
+          <li><span>National Merit Commended Scholar · AP Scholar with Distinction</span><span></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="mvt" id="contact">
+  <div class="wrap">
+    <div class="mvt-label"><div class="no">V.</div><h2>Contact</h2></div>
+    <div class="mvt-body">
+      <p class="contact-line">Say hello at<br><a href="mailto:kyley@stanford.edu">kyley@stanford.edu</a></p>
+      <div class="links">
+        <span>GitHub: <a href="https://github.com/kyleayeung">github.com/kyleayeung</a></span>
+        <span>LinkedIn: <a href="#contact">add your link</a></span>
+        <span>Recordings: <a href="#contact">add your link</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Kyle Yeung</span>
+    <span class="fine">Fine.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var buttons = document.querySelectorAll('.filters button');
+  var items = document.querySelectorAll('#project-list .project');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var f = btn.getAttribute('data-f');
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      items.forEach(function (li) {
+        var tags = (li.getAttribute('data-t') || '').split(' ');
+        li.hidden = !(f === 'all' || tags.indexOf(f) !== -1);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
